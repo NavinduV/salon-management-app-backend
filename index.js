@@ -92,12 +92,13 @@ app.post('/account/appointments/new', async (req, res) => {
 app.post('/login', async (req, res) => {
     const {email, password} = req.body;
     const userData = await User.findOne({email});
+    const age = 1000*60*60*60*7;
     if (userData) {
         const checkPass = bcrypt.compareSync(password, userData.password);
         if (checkPass) {
             jsonWebToken.sign({name: userData.name, userId: userData._id, email: userData.email}, jsonWebTokenSecret, {}, (err, token) => {
                 if (err) throw err;
-                res.cookie('token', token).json(userData);
+                res.cookie('token', token, {httpOnly:true, maxAge: age }).json(userData);
             });
             
         } else {
@@ -106,7 +107,7 @@ app.post('/login', async (req, res) => {
     } else {
         res.status(422).json("Not found.");
     ;}
-}) 
+})  
 
 
 app.get('/profile', (req, res) => {
