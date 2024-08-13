@@ -96,7 +96,7 @@ app.post('/login', async (req, res) => {
     if (userData) {
         const checkPass = bcrypt.compareSync(password, userData.password);
         if (checkPass) {
-            jsonWebToken.sign({name: userData.name, userId: userData._id, email: userData.email}, {expiresIn: age}, jsonWebTokenSecret, {}, (err, token) => {
+            jsonWebToken.sign({name: userData.name, userId: userData._id, email: userData.email}, jsonWebTokenSecret, {expiresIn: age}, (err, token) => {
                 if (err) throw err;
                 res.cookie('token', token, {httpOnly:true, maxAge: age }).json(userData);
             });
@@ -107,7 +107,7 @@ app.post('/login', async (req, res) => {
     } else {
         res.status(422).json("Not found.");
     ;}
-}) 
+})
 
 
 app.get('/profile', (req, res) => {
